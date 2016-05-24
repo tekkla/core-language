@@ -1,0 +1,33 @@
+{
+    "name": "tekkla/core-language",
+    "description": "Simple lib for multilanguage support.",
+    "require": {
+        "php": ">=7.0.0",
+        "tekkla/core-storage": ">=1.0.0",
+        "tekkla/core-functions": ">=1.0.0"
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://packagist.org/"
+        }
+    ],
+    "license": "MIT",
+    "keywords": [
+        "language"
+    ],
+    "autoload": {
+        "psr-0": {
+            "Core\\Language": ""
+        }
+    },
+    "type": "library",
+    "homepage": "https://github.com/Tekkla/core-language",
+    "authors": [
+        {
+            "name": "Michael Zorn",
+            "email": "tekkla@tekkla.de",
+            "role": "Developer"
+        }
+    ]
+}
