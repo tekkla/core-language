@@ -37,6 +37,6 @@ interface TextInterface
      *
      * @return string
      */
-    public function get(string $key, array $strings = []): string;
+    public function get(string $key, array $strings = []);
 }
 

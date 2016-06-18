@@ -51,7 +51,7 @@ class Text implements TextInterface
      *
      * @see \Core\Language\TextInterface::get($key, $strings)
      */
-    public function get(string $key, array $strings = []): string
+    public function get(string $key, array $strings = [])
     {
         if (!isset($this->language)) {
             Throw new LanguageException('Text neeeds a set Language object.');
