@@ -1,7 +1,7 @@
 <?php
 namespace Core\Language;
 
-use function Core\arrayFlatten;
+use Core\Toolbox\Arrays\Flatten;
 
 /**
  * Language.php
@@ -38,11 +38,12 @@ class Language implements LanguageInterface
     /**
      * Sets the name of the fallback storage
      *
-     * The fallback storage will be queried for a text when the requested storage returns nor result.
+     * The fallback storage will be queried for a text when the requested storage returns no result.
      *
      * @param string $fallback
+     *            name of the fallback language storage
      */
-    public function setFallbackStorageName($fallback)
+    public function setFallbackStorageName(string $fallback)
     {
         $this->fallback = $fallback;
     }
@@ -56,49 +57,53 @@ class Language implements LanguageInterface
      *            Name of storage the loaded language texts will be stored in
      * @param string $filename
      *            File path of mthe languagefile to load
-     *
-     * @throws InvalidArgumentException
      */
-    public function loadLanguageFile($storage_name, $filename)
+    public function loadLanguageFile(string $storage_name, string $filename, string $glue = '.')
     {
         if (file_exists($filename)) {
 
-            $lang_array = include ($filename);
+            $language = include ($filename);
 
-            if (is_array($lang_array)) {
-
-                $lang_array = arrayFlatten($lang_array, '', '.', true);
-
-                foreach ($lang_array as $key => $val) {
-
-                    if (!isset($this->storage->{$storage_name})) {
-                        $this->storage->{$storage_name} = new LanguageStorage();
-                    }
-
-                    $this->storage->{$storage_name}->{$key} = $val;
-                }
+            if (is_array($language)) {
+                $this->parseLanguageArray($language, $storage_name);
             }
         }
     }
 
     /**
-     * Returns text form by key from a storage
+     * Parses an array of key/value structured strings, flattens it with the glue and adds it to the a language storage
      *
-     * Only translates texts that does not contain spaces.
-     * Tries to find text in optional set fallback storage when key is not found in the requested one.
-     * Returns the key when no text is found.
-     * Allows linking of keys within a storage and throws an exception when it comes to ininite loops.
-     *
+     * @param array $language
+     *            The array with language strings
      * @param string $storage_name
-     *            Name of storage to query for the key belongs to.
-     * @param string $key
-     *            Key of the requested text
-     *
-     * @throws LanguageException
-     *
-     * @return string
+     *            The name of the language storage to place the srings in
+     * @param string $glue
+     *            Optional glue which should be used in flattening process
      */
-    public function get($storage_name, $key)
+    public function parseLanguageArray(array $language, string $storage_name, string $glue = '.')
+    {
+        $toolbox = new Flatten($language);
+        $toolbox->setPreserveFlaggedArraysFlag(true);
+        $toolbox->setGlue($glue);
+
+        $language = $toolbox->flatten();
+
+        if (!empty($language) && !isset($this->storage->{$storage_name})) {
+            $this->storage->{$storage_name} = new LanguageStorage();
+        }
+
+        foreach ($language as $key => $val) {
+            $this->storage->{$storage_name}->{$key} = $val;
+        }
+    }
+
+    /**
+     *
+     * {@inheritdoc}
+     *
+     * @see \Core\Language\LanguageInterface::get()
+     */
+    public function get(string $storage_name, string $key): string
     {
 
         // IMPORTANT! Keys with spaces won't be processed without any further
@@ -133,14 +138,14 @@ class Language implements LanguageInterface
     }
 
     /**
-     * Returns a reference to the language string of a specific app
+     * Returns a reference to a specfic the language storage
      *
      * @param string $storage_name
-     *            Name of the app the language blongs to
+     *            Name of the storage to get a reference to
      *
-     * @return AppLanguage
+     * @return \Core\Language\LanguageStorage
      */
-    public function &getAppLanguage($storage_name)
+    public function &getStorage($storage_name): LanguageStorage
     {
         $return = false;
 
@@ -152,13 +157,14 @@ class Language implements LanguageInterface
     }
 
     /**
-     * Creates and return as TextAdapter object
+     * Creates and return as Text object
      *
      * @param string $storage_name
      *            Name of the text storage the adapter gets it's data from
-     * @return \Core\Language\Text
+     *
+     * @return \Core\Language\TextInterface
      */
-    public function createTextAdapter($storage_name)
+    public function createTextAdapter($storage_name): TextInterface
     {
         $adapter = new Text();
         $adapter->setLanguage($this);

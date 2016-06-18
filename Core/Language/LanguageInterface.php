@@ -23,6 +23,6 @@ interface LanguageInterface
      *
      * @return string
      */
-    public function get($storage_name, $key);
+    public function get(string $storage_name, string $key): string;
 }
 

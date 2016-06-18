@@ -8,7 +8,7 @@ namespace Core\Language;
  * @copyright 2016
  * @license MIT
  */
-class Text
+class Text implements TextInterface
 {
 
     /**
@@ -25,7 +25,9 @@ class Text
 
     /**
      *
-     * @param LanguageInterface $language
+     * {@inheritdoc}
+     *
+     * @see \Core\Language\TextInterface::setLanguage($language)
      */
     public function setLanguage(LanguageInterface $language)
     {
@@ -33,30 +35,38 @@ class Text
     }
 
     /**
-     * Sets the name of the language storage to query
      *
-     * @param string $storage_name
+     * {@inheritdoc}
+     *
+     * @see \Core\Language\TextInterface::setStorageName($storage_name)
      */
-    public function setStorageName($storage_name)
+    public function setStorageName(string $storage_name)
     {
         $this->storage_name = $storage_name;
     }
 
     /**
-     * Queries language storage for a string mapped to a key.
      *
-     * @param string $key
+     * {@inheritdoc}
+     *
+     * @see \Core\Language\TextInterface::get($key, $strings)
      */
-    public function get($key)
+    public function get(string $key, array $strings = []): string
     {
-        if (! isset($this->language)) {
+        if (!isset($this->language)) {
             Throw new LanguageException('Text neeeds a set Language object.');
         }
 
-        if (! isset($this->storage_name)) {
+        if (!isset($this->storage_name)) {
             Throw new LanguageException('No storage name set.');
         }
 
-        return $this->language->get($this->storage_name, $key);
+        $text = $this->language->get($this->storage_name, $key);
+
+        if (!empty($strings)) {
+            $text = vsprintf($text, $strings);
+        }
+
+        return $text;
     }
 }
