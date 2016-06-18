@@ -103,7 +103,7 @@ class Language implements LanguageInterface
      *
      * @see \Core\Language\LanguageInterface::get()
      */
-    public function get(string $storage_name, string $key): string
+    public function get(string $storage_name, string $key)
     {
 
         // IMPORTANT! Keys with spaces won't be processed without any further
