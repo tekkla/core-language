@@ -7,7 +7,7 @@ use function Core\arrayFlatten;
  * Language.php
  *
  * @author Michael "Tekkla" Zorn <tekkla@tekkla.de>
- * @copyright 2016
+ * @copyright 2016-2017
  * @license MIT
  */
 class Language implements LanguageInterface
@@ -42,7 +42,7 @@ class Language implements LanguageInterface
      *
      * @param string $fallback
      */
-    public function setFallbackStorageName($fallback)
+    public function setFallbackStorageName(string $fallback)
     {
         $this->fallback = $fallback;
     }
@@ -56,10 +56,8 @@ class Language implements LanguageInterface
      *            Name of storage the loaded language texts will be stored in
      * @param string $filename
      *            File path of mthe languagefile to load
-     *
-     * @throws InvalidArgumentException
      */
-    public function loadLanguageFile($storage_name, $filename)
+    public function loadLanguageFile(string $storage_name, string $filename)
     {
         if (file_exists($filename)) {
 
@@ -98,7 +96,7 @@ class Language implements LanguageInterface
      *
      * @return string
      */
-    public function get($storage_name, $key)
+    public function get(string $storage_name, string $key)
     {
 
         // IMPORTANT! Keys with spaces won't be processed without any further
@@ -130,25 +128,6 @@ class Language implements LanguageInterface
 
         // Return requested text
         return $this->get($storage_name, $text);
-    }
-
-    /**
-     * Returns a reference to the language string of a specific app
-     *
-     * @param string $storage_name
-     *            Name of the app the language blongs to
-     *
-     * @return AppLanguage
-     */
-    public function &getAppLanguage($storage_name)
-    {
-        $return = false;
-
-        if (isset($storage_name, $this->storage->{$storage_name})) {
-            $return = $this->storage->{$storage_name};
-        }
-
-        return $return;
     }
 
     /**
