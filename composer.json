@@ -27,5 +27,6 @@
 			"email" : "tekkla@tekkla.de",
 			"role" : "Developer"
 		}
-	]
+	],
+	"minimum-stability" : "dev"
 }
